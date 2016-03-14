@@ -28,6 +28,10 @@ def main():
     global commandField2
     global resultListView
     
+	#need cross team compatibility ... check if the target folder is indeed an accurev depo - cud use os.chdir() after socket.getfqdn() find on 'show wspaces -f x'
+	#earlier just thought of having this script in the wspace folder... but git folder and making it more universal came into consideration
+	dirPath='c:\\code\\'
+	
     window=Tkinter.Tk()
     window.title('AccuRev Lightweight Helper')
     window.lift()
