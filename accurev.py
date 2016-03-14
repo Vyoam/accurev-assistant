@@ -15,6 +15,9 @@ import ttk
 import re
 import xml.etree.ElementTree as ET
 
+import socket
+import os
+
 from datetime import datetime
 
 window=None
@@ -28,10 +31,10 @@ def main():
     global commandField2
     global resultListView
     
-	#need cross team compatibility ... check if the target folder is indeed an accurev depo - cud use os.chdir() after socket.getfqdn() find on 'show wspaces -f x'
-	#earlier just thought of having this script in the wspace folder... but git folder and making it more universal came into consideration
-	dirPath='c:\\code\\'
-	
+    #need cross team compatibility ... check if the target folder is indeed an accurev depo - cud use os.chdir() after socket.getfqdn() find on 'show wspaces -f x'
+    #earlier just thought of having this script in the wspace folder... but git folder and making it more universal came into consideration
+    changeToWspaceDir()
+    
     window=Tkinter.Tk()
     window.title('AccuRev Lightweight Helper')
     window.lift()
@@ -57,6 +60,37 @@ def main():
     button2.pack()
     
     Tkinter.mainloop()
+
+def changeToWspaceDir():    
+    print '\nTrying to detect and change to your workspace directory...'
+    getWspaceCmd='accurev show wspaces -f x'
+    try:
+        #funny how the absence of the second parameter blanks out e.output in Exception
+        wspaceResult=subprocess.check_output(getWspaceCmd, stderr=subprocess.STDOUT)
+    except Exception as e:
+        print 'Error...'
+        print e.output
+        if(re.search(r'Not authenticated',e.output)!=None):
+            subprocess.call('accurev login')
+            wspaceResult=subprocess.check_output(getWspaceCmd)
+        else:
+            print 'Quitting'
+            quit(1)
+    
+    print wspaceResult
+    wspaceDir='.'
+    
+    treeRoot=ET.fromstring(wspaceResult)
+    for child in treeRoot:
+        if child.tag.lower() == 'element':
+            print "child.attrib['Host'].lower()::"+child.attrib['Host'].lower()
+            print 'socket.getfqdn().lower()::'+socket.getfqdn().lower()
+            if(child.attrib['Host'].lower()==socket.getfqdn().lower()):
+                wspaceDir=child.attrib['Storage']
+                break
+    
+    print wspaceDir
+    os.chdir(wspaceDir)
 
 def inputEntry1Action(event=None):
     global commandField1
@@ -123,7 +157,7 @@ def parseAndFillList(dataListStr):
     
     treeRoot=ET.fromstring(dataListStr)
     for child in treeRoot:
-        if child.tag == 'element':
+        if child.tag.lower() == 'element':
             filePath=child.attrib['location']
             time=datetime.fromtimestamp( float(child.attrib['modTime']) ).strftime(timeFormat)
             list.append( (filePath, time) )
