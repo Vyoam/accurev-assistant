@@ -185,7 +185,8 @@ class MultiColumnListbox(object):
         msg = ttk.Label(window, wraplength="4i", justify="left", anchor="n",
             padding=(10, 2, 10, 6), text=s)
         msg.pack(fill='x')
-        container = ttk.Frame(window)
+        container = ttk.Frame(window, width=1300, height=500) #ref. .grid_propagate(0) http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/ttk-Frame.html
+        container.grid_propagate(0)
         container.pack(fill='both', expand=True)
         # create a treeview with dual scrollbars
         self.tree = ttk.Treeview(columns=my_headers, show="headings")
