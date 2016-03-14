@@ -94,41 +94,31 @@ def changeToWspaceDir():
 
 def inputEntry1Action(event=None):
     global commandField1
-    #Keeping these arrow as comment as they might be useful as other kind of separator
-    #Here, the 'in and out' representations seem better
-    #print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
+
     print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     print 'Command 1 Started...'
-    #print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
     print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     command1=commandField1.get()
     ###Maybe check and just use .call() for commands not requiring parsing?
     commandOutputStr=subprocess.check_output(command1)
     print commandOutputStr
-    #print '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     print '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
     print 'Command 1 Complete'
     ###Remove below call if using .call()
     if(re.search(r'<AcResponse',commandOutputStr)!=None):
         parseAndFillList(commandOutputStr)
-    #print '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     print '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<';
 
 def button2Action(event=None):
     global commandField2
-    #Keeping these arrow as comment as they might be useful as other kind of separator
-    #Here, the 'in and out' representations seem better
-    #print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
+    
     print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     print 'Command 2 Started...'
-    #print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
     print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     command2=commandField2.get()
     getSelectedAndCall(command2)
-    #print '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     print '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
     print 'Command 2 Complete'
-    #print '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
     print '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
     
 # the test data ...
@@ -179,7 +169,7 @@ def getSelectedAndCall(commandStr):
     subprocess.call(appendStr)
     print 'Executing Command...'
     
-###Add reference source
+###Ref. http://stackoverflow.com/questions/5286093/display-listbox-with-columns-using-tkinter 
 """use a ttk.TreeView as a multicolumn ListBox"""
 class MultiColumnListbox(object):
 
