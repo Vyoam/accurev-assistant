@@ -31,8 +31,7 @@ def main():
     global commandField2
     global resultListView
     
-    #need cross team compatibility ... check if the target folder is indeed an accurev depo - cud use os.chdir() after socket.getfqdn() find on 'show wspaces -f x'
-    #earlier just thought of having this script in the wspace folder... but git folder and making it more universal came into consideration
+    #using accurev, detect the workspace folder for the system and cd to that folder
     changeToWspaceDir()
     
     window=Tkinter.Tk()
@@ -44,10 +43,6 @@ def main():
     commandField1=Tkinter.Entry(window)
     commandField1.bind('<Return>', inputEntry1Action)
     commandField1.pack()
-    
-    #Previosuly had tried the basic list - non-tree, w/o columns
-    #resultListView=Tkinter.Listbox(window, selectmode=Tkinter.EXTENDED)
-    #resultListView.pack()
     
     resultListView=MultiColumnListbox()
     
@@ -70,7 +65,7 @@ def changeToWspaceDir():
     except Exception as e:
         print 'Error...'
         print e.output
-        if(re.search(r'Not authenticated',e.output)!=None):
+        if(re.search(r'Not authenticated', e.output)!=None):
             subprocess.call('accurev login')
             wspaceResult=subprocess.check_output(getWspaceCmd)
         else:
@@ -122,7 +117,7 @@ def button2Action(event=None):
     print '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
     
 # the test data ...
-my_headers = ['column-1', 'column-2']
+my_headers = ['location', 'modTime', 'status', 'namedVersion']
 my_list = [
 ('row1', 'you') ,
 ('row2', 'can') ,
@@ -134,27 +129,33 @@ my_list = [
 #pass the headings as well as the items to populate the new list
 def parseAndFillList(dataListStr):
     global resultListView
-    resultListView.tree.delete(*(resultListView.tree.get_children()))
+    global my_headers
+    
     print 'Parsing Result List...'
-    
-    # using split for standard list (non-xml)
-    #list=dataListStr.split('\r\n')
-    #for i, row in enumerate(list):
-    #   list[i]=((row.split(' '))[0],'Data')
-    
     list=[]
-    timeFormat="%d %B %Y %H:%M:%S"  #%c : The preferred date and time representation for the current locale.
+    headers=my_headers
+    timeFormat="%d %B %Y %H:%M:%S"
     
-    treeRoot=ET.fromstring(dataListStr)
-    for child in treeRoot:
-        if child.tag.lower() == 'element':
-            filePath=child.attrib['location']
-            time=datetime.fromtimestamp( float(child.attrib['modTime']) ).strftime(timeFormat)
-            list.append( (filePath, time) )
-    
-    print list
-    resultListView._build_tree(items=list)
-    print 'Parsing Done'
+    try:
+        treeRoot=ET.fromstring(dataListStr)
+        for child in treeRoot:
+            if child.tag.lower() == 'element':
+                filePath=child.attrib['location']
+                time=datetime.fromtimestamp( float(child.attrib['modTime']) ).strftime(timeFormat)
+                status=child.attrib['status']
+                namedVersion=child.attrib['namedVersion']
+                list.append( (filePath, time, status, namedVersion) )
+        
+        print list
+        #need change here to call specific code to change the columns only instead of the below costlier call. P.S. doesn't work well either - creates extra box, column re-linking doesn't happen
+        #resultListView._setup_widgets(titles=headers)
+        resultListView._build_tree(titles=headers, items=list)
+        
+        print 'Parsing Done'
+        
+    except Exception as e:
+        print "Error. Couldn't finish parsing..."
+        print e
 
 def getSelectedAndCall(commandStr):
     global resultListView
@@ -179,8 +180,9 @@ class MultiColumnListbox(object):
         #disabled loading of test data
         #self._build_tree()
 
-    def _setup_widgets(self):
+    def _setup_widgets(self, titles=my_headers):
         global window
+        
         s = 'Click on header to sort by that column\nto change width of column, drag boundary'
         msg = ttk.Label(window, wraplength="4i", justify="left", anchor="n",
             padding=(10, 2, 10, 6), text=s)
@@ -189,7 +191,7 @@ class MultiColumnListbox(object):
         container.grid_propagate(0)
         container.pack(fill='both', expand=True)
         # create a treeview with dual scrollbars
-        self.tree = ttk.Treeview(columns=my_headers, show="headings")
+        self.tree = ttk.Treeview(columns=titles, show="headings")
         vsb = ttk.Scrollbar(orient="vertical",
             command=self.tree.yview)
         hsb = ttk.Scrollbar(orient="horizontal",
