@@ -67,7 +67,7 @@ def main():
     changeToWspaceDir()
     
     window=Tkinter.Tk()
-    window.title('AccuRev Lightweight Helper')
+    window.title('AccuRev Assistant')
     window.lift()
     window.attributes('-topmost', True)
     window.attributes('-topmost', False)
