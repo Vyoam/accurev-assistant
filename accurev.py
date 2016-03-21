@@ -47,8 +47,10 @@ defaultCommandOptionStr2="Keep selected"
 defaultCommandOptionValStr2='accurev keep -c ""'
 
 commandOptionsDict2 = {defaultCommandOptionStr2:defaultCommandOptionValStr2,
-                      "Revert to backed":'accurev purge',
+                      "Revert selected to backed":'accurev purge',
                       "Promote selected":'accurev promote -c ""',
+                      "Update":"accurev update",
+                      "Show status of selected (console o/p)": "accurev stat -f x",
                       "Custom command":'accurev '}                   
                       
 def main():
@@ -81,7 +83,7 @@ def main():
     defaultCommandOption=Tkinter.StringVar(container1)
     defaultCommandOption.set(defaultCommandOptionStr)
     commandOptions=commandOptionsDict.keys()
-    commandMenu=Tkinter.OptionMenu(container1, defaultCommandOption, *commandOptions, command=fillCommandField)
+    commandMenu=Tkinter.OptionMenu(container1, defaultCommandOption, *commandOptions, command=fillCommandField1)
     commandMenu.config(bg="DarkSeaGreen2")
     commandMenu.pack(side=Tkinter.LEFT, padx=10)
     
@@ -119,7 +121,7 @@ def main():
     button2.pack(side=Tkinter.LEFT, padx=10)
     #<<<
     
-    fillCommandField(defaultCommandOptionStr)
+    fillCommandField1(defaultCommandOptionStr)
     fillCommandField2(defaultCommandOptionStr2)
     Tkinter.mainloop()
 
@@ -184,7 +186,7 @@ def button2Action(event=None):
     print 'Command 2 Complete'
     print '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
     
-def fillCommandField(option):
+def fillCommandField1(option):
     global commandField1
     global commandOptionsDict
     
@@ -217,11 +219,15 @@ def parseAndFillList(dataListStr):
     list=[]
     headers=my_headers
     timeFormat="%d %B %Y %H:%M:%S"
+    messageStr='Not Available'
     
     try:
         treeRoot=ET.fromstring(dataListStr)
         for child in treeRoot:
-            if child.tag.lower() == 'element':
+            if child.tag.lower() == 'message': # for update preview
+                messageStr=child.text
+                
+            elif child.tag.lower() == 'element':
             
                 filePath=matchKeyAndGetVal(child, 'location') #child.attrib['location']
                 
@@ -230,7 +236,7 @@ def parseAndFillList(dataListStr):
                 try:
                     temp=float(temp)
                 except ValueError:
-                    print "Not a float"
+                    print "Not a float. modTime N/A."
                     temp=None
                     
                 if(temp):
@@ -239,11 +245,15 @@ def parseAndFillList(dataListStr):
                     time='N/A'
                 
                 status=matchKeyAndGetVal(child, 'status') #child.attrib['status']
+                
+                if status == 'N/A':
+                    status=messageStr # for update preview
+                
                 namedVersion=matchKeyAndGetVal(child, 'namedVersion') #child.attrib['namedVersion']
                 
                 list.append( (filePath, time, status, namedVersion) )
         
-        print list
+        #print list
         #need change here to call specific code to change the columns only instead of the below costlier call. P.S. doesn't work well either - creates extra box, column re-linking doesn't happen
         #resultListView._setup_widgets(titles=headers)
         resultListView._build_tree(titles=headers, items=list)
@@ -269,7 +279,7 @@ def getSelectedAndCall(commandStr):
     for resultItem in resultListView.tree.selection():
         #resultItem is a coded identifier for the whole row
         temp = resultListView.tree.set(resultItem)
-        #print temp[temp.keys()[0]]
+        #print temp[temp.keys()[0]] # using first column as the one contaning file name
         #appendStr=appendStr+' '+temp[temp.keys()[0]]
         print temp['location']
         appendStr=appendStr+' \"'+temp['location']+'\"'
