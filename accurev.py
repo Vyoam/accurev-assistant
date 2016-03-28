@@ -7,6 +7,7 @@ This was created out of the need to mitigate the slowness of AccuRev GUI ...
 '''
 
 # to do? http://stackoverflow.com/questions/6548837/how-do-i-get-an-event-callback-when-a-tkinter-entry-widget-is-modified link to activate custom when field changed manually?
+# to do, update button?
 
 import Tkinter
 import subprocess
