@@ -151,7 +151,7 @@ def changeToWspaceDir():
         if child.tag.lower() == 'element':
             print "child.attrib['Host'].lower()::"+child.attrib['Host'].lower()
             print 'socket.getfqdn().lower()::'+socket.getfqdn().lower()
-            if(child.attrib['Host'].lower()==socket.getfqdn().lower()):
+            if(re.search(socket.getfqdn().lower(),child.attrib['Host'].lower())!=None) or (re.search(child.attrib['Host'].lower(),socket.getfqdn().lower())!=None): #changed from equals comparison after accurev update (child.attrib['Host'].lower()==socket.getfqdn().lower())
                 wspaceDir=child.attrib['Storage']
                 break
     
