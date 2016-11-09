@@ -41,18 +41,22 @@ commandOptionsDict = {defaultCommandOptionStr:defaultCommandOptionValStr,
                       "List external":'accurev stat -f x -x',
                       "List missing":'accurev stat -f x -M',
                       "List default group":'accurev stat -f x -d',
+                      "List default group, Parent Stream":'accurev stat -f x -d -b',
+                      "List default group, Custom Stream":'accurev stat -f x -d -s <stream>',
                       "Update preview":'accurev update -i -f x', #response doesn't return status... maybe one of the reason GUI is slow... it fetches status one by one?
-                      "Custom command":'accurev '}
+                      "Custom command":'accurev <cmd>'}
 
 defaultCommandOptionStr2="Keep selected"
 defaultCommandOptionValStr2='accurev keep -c ""'
 
 commandOptionsDict2 = {defaultCommandOptionStr2:defaultCommandOptionValStr2,
+                      "Diff against backed":"accurev diff -b -G",
+                      "Diff against backed (custom stream)":"accurev diff -b -v <stream> -G",
                       "Revert selected to backed":'accurev purge',
                       "Promote selected":'accurev promote -c ""',
                       "Update":"accurev update",
                       "Show status of selected (console o/p)": "accurev stat -f x",
-                      "Custom command":'accurev '}                   
+                      "Custom command":'accurev <cmd>'}                   
                       
 def main():
     global window
