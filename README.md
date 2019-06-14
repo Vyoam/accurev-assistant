@@ -17,7 +17,11 @@ Installation:
 Or better, clone the repo: https://github.com/Vyoam/accurev-assistant
 
 2.	Verify the system requirements below and invoke the script from console: accurev.py OR python accurev.py – whatever your system supports
-3.	With respect to the the GUI screenshot above, select command at the upper menu (e.g. kept, modified) to list out the required elements. Then select desired elements and apply the bottom command (e.g. revert, promote) to them.
+
+
+Usage: 
+
+In the GUI, select command at the upper menu (e.g. kept, modified) to list out the required elements. Then select desired elements and apply the bottom command (e.g. revert, promote) to them.
 
 
 System Requirements:
